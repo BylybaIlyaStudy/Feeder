@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Time>60000</Time>
+  <Feeds>
+    <RSS_Feed>
+      <Status>true</Status>
+      <Link>https://habr.com/ru/rss/flows/popsci/all/?fl=ru</Link>
+    </RSS_Feed>
+    <RSS_Feed>
+      <Status>true</Status>
+      <Link>https://habr.com/ru/rss/flows/develop/all/?fl=ru</Link>
+    </RSS_Feed>
+  </Feeds>
+  <Description_format>true</Description_format>
+</Settings>

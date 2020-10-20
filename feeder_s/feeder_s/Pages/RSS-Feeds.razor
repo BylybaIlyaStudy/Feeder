@@ -1,0 +1,82 @@
+﻿@inject Services.BlazorTimer Timer;
+@inject IJSRuntime JSRuntime;
+
+@page "/"
+
+<div class="header">
+    <div class="header_text">
+        <h1>RSS-feeds</h1>
+    </div>
+    <div class="inline-block">
+        <h1>Description</h1>
+    </div>
+</div>
+
+<div class="rss_feeds">
+    @if (CountOfItems == 0)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        foreach (Services.Items item in items)
+        {
+            <div class="rss_feeds_item">
+                <div class="rss_feeds_title" @onclick='(e => OpenLink(item.link))'>
+                    <p>@item.title</p>
+                </div>
+                <div class="rss_feeds_date">
+                    <p>@item.pubDate</p>
+                    <button class="btn btn-primary" @onclick='(e => description = item.description)'>Show description</button>
+                </div>
+            </div>
+
+        }
+    }
+</div>
+<div class="rss_feed_description">
+    <p class="rss_feed_description_text">@description</p>
+</div>
+
+@code {
+    private string description = "";
+
+    private Services.RSSReader reader = new Services.RSSReader();
+
+    List<Services.Items> items = null;
+    int CountOfItems = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        OnLoad();
+        await Task.Delay(1);
+    }
+
+    private void OnLoad()
+    {
+        Show_RSSfeeds();
+        StartTimer();
+    }
+
+    private void OpenLink(string link)
+    {
+        JSRuntime.InvokeAsync<string>("window.open", link);
+    }
+
+    private void Show_RSSfeeds()
+    {
+        items = reader.GetElements();
+        CountOfItems = items.Count;
+    }
+
+    private void StartTimer()
+    {
+        Timer.SetTimer(Program.s.Time);
+        Timer.OnElapsed += TimerElapsedHandler;
+    }
+
+    public void TimerElapsedHandler()
+    {
+        JSRuntime.InvokeAsync<string>("window.location.reload", true);
+    }
+}

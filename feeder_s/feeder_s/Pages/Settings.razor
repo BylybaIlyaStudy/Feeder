@@ -1,0 +1,58 @@
+﻿@page "/settings"
+
+<h1>Settings</h1>
+
+<div>
+    <p class="inline-block">Time: </p> 
+    <input class="inline-block" @bind="Time" @oninput="ChangeTime" />
+</div>
+
+<div>
+    <p class="inline-block">Formatting of the description: </p>
+    <button class="inline-block" @onclick="ChangeDescriptionFormat">@Program.s.Description_format</button>
+</div>
+
+<div>
+    <p>RSS-feeds</p>
+    @foreach (RSS_Feed feed in Program.s.Feeds)
+    {
+        <div class="rss_link_settings">
+            <input class="rss_link_text" @bind="feed.Link" @oninput="(e => ChangeLink(feed, e.Value.ToString()))" />
+            <button @onclick="(e => ChangeStatus(feed))">@feed.Status</button>
+        </div>
+    }
+</div>
+
+@code {
+    string Time = Program.s.Time.ToString();
+
+    void ChangeTime(ChangeEventArgs e)
+    {
+        int time = 0;
+        bool success = Int32.TryParse(e.Value.ToString(), out time);
+
+        if (success)
+        {
+            Program.s.Time = time;
+            feeder_s.Settings.SaveSettings(Program.s);
+        }
+    }
+
+    void ChangeDescriptionFormat()
+    {
+        Program.s.Description_format = !Program.s.Description_format;
+        feeder_s.Settings.SaveSettings(Program.s);
+    }
+
+    void ChangeLink(RSS_Feed feed, string link)
+    {
+        Program.s.Feeds[Array.IndexOf(Program.s.Feeds, feed)].Link = link;
+        feeder_s.Settings.SaveSettings(Program.s);
+    }
+
+    void ChangeStatus(RSS_Feed feed)
+    {
+        Program.s.Feeds[Array.IndexOf(Program.s.Feeds, feed)].Status = !Program.s.Feeds[Array.IndexOf(Program.s.Feeds, feed)].Status;
+        feeder_s.Settings.SaveSettings(Program.s);
+    }
+}
